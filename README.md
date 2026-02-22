@@ -11,6 +11,5 @@ This repository contains examples of various AWS networking technologies and how
 
 ## Examples
 
-- `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/examples/vpc_pair`
 - `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/examples/peering-demo`
 - `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/examples/transit-gateway-demo`
