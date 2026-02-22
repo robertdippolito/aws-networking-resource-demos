@@ -186,19 +186,26 @@ locals {
     vpc_d = [module.vpc_d.public_route_table_id, module.vpc_d.private_route_table_id]
   }
 
-  tgw_routes = {
-    for route in flatten([
-      for src_key, route_table_ids in local.vpc_route_tables : flatten([
-        for route_table_id in route_table_ids : [
-          for dst_key, dst_cidr in local.vpc_cidrs : {
-            key              = "${src_key}-${route_table_id}-${dst_key}"
-            route_table_id   = route_table_id
-            destination_cidr = dst_cidr
-          } if src_key != dst_key
-        ]
-      ])
-    ]) : route.key => route
+  # who talks to who
+  vpc_pairs = {
+    for pair in setproduct(keys(local.vpc_cidrs), keys(local.vpc_cidrs)) :
+    "${pair[0]}->${pair[1]}" => {
+      source_vpc       = pair[0]
+      destination_vpc  = pair[1]
+      destination_cidr = local.vpc_cidrs[pair[1]]
+    } if pair[0] != pair[1]
   }
+
+  # which route tables need routes
+  tgw_routes = merge([
+    for _, pair in local.vpc_pairs : {
+      for route_table_id in local.vpc_route_tables[pair.source_vpc] :
+      "${pair.source_vpc}-${route_table_id}-${pair.destination_vpc}" => {
+        route_table_id   = route_table_id
+        destination_cidr = pair.destination_cidr
+      }
+    }
+  ]...)
 }
 
 resource "aws_route" "to_tgw" {

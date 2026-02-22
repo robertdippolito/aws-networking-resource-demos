@@ -1,8 +1,3 @@
-output "transit_gateway_id" {
-  description = "Transit Gateway ID used in this demo."
-  value       = module.tgw.transit_gateway_id
-}
-
 output "vpc_ids" {
   description = "VPC IDs by name."
   value = {
@@ -31,4 +26,9 @@ output "instance_public_ips" {
     app_c = module.app_c.public_ip
     app_d = module.app_d.public_ip
   }
+}
+
+output "transit_gateway_id" {
+  description = "Transit Gateway ID used in this demo."
+  value       = module.tgw.transit_gateway_id
 }
