@@ -5,6 +5,7 @@ This repository contains examples of various AWS networking technologies and how
 ## Modules
 
 - `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/modules/vpc`
+- `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/modules/cloudwan`
 - `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/modules/vpc_peering`
 - `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/modules/transit_gateway`
 - `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/modules/ec2_http`
@@ -13,3 +14,4 @@ This repository contains examples of various AWS networking technologies and how
 
 - `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/examples/peering-demo`
 - `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/examples/transit-gateway-demo`
+- `/Users/robertdippolito/Desktop/dev/aws-networking-resource-demos/examples/cloudwan-demo`
