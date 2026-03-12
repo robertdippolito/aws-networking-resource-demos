@@ -7,7 +7,7 @@ variable "region_a" {
 variable "region_b" {
   description = "Secondary region for VPC B."
   type        = string
-  default     = "us-west-2"
+  default     = "us-east-2"
 }
 
 variable "region_a_az" {
@@ -19,7 +19,7 @@ variable "region_a_az" {
 variable "region_b_az" {
   description = "AZ used for VPC B resources."
   type        = string
-  default     = "us-west-2a"
+  default     = "us-east-2a"
 }
 
 variable "key_name_region_a" {
