@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 5.0"
     }
+    time = {
+      source  = "hashicorp/time"
+      version = ">= 0.9"
+    }
   }
 }
 
@@ -15,7 +19,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias  = "use2"
+  alias  = "usw2"
   region = var.region_b
 }
 
@@ -52,7 +56,7 @@ module "vpc_b" {
   source = "../../modules/vpc"
 
   providers = {
-    aws = aws.use2
+    aws = aws.usw2
   }
 
   name                = "cloudwan-vpc-b"
@@ -92,7 +96,7 @@ module "app_b" {
   source = "../../modules/ec2_http"
 
   providers = {
-    aws = aws.use2
+    aws = aws.usw2
   }
 
   name      = "cloudwan-app-b"
@@ -122,13 +126,20 @@ module "cloudwan" {
   tags = local.project_tags
 }
 
+resource "time_sleep" "wait_for_cloudwan_policy_live" {
+  depends_on = [module.cloudwan]
+
+  # CloudWAN policy promotion to LIVE can lag behind Terraform resource completion.
+  create_duration = "180s"
+}
+
 data "aws_vpc" "vpc_a" {
   provider = aws.use1
   id       = module.vpc_a.vpc_id
 }
 
 data "aws_vpc" "vpc_b" {
-  provider = aws.use2
+  provider = aws.usw2
   id       = module.vpc_b.vpc_id
 }
 
@@ -138,7 +149,7 @@ data "aws_subnet" "vpc_a_private" {
 }
 
 data "aws_subnet" "vpc_b_private" {
-  provider = aws.use2
+  provider = aws.usw2
   id       = module.vpc_b.private_subnet_id
 }
 
@@ -153,10 +164,12 @@ resource "aws_networkmanager_vpc_attachment" "vpc_a" {
     Name    = "cloudwan-vpc-a-attachment"
     Segment = module.cloudwan.segment_name
   })
+
+  depends_on = [time_sleep.wait_for_cloudwan_policy_live]
 }
 
 resource "aws_networkmanager_vpc_attachment" "vpc_b" {
-  provider = aws.use2
+  provider = aws.usw2
 
   core_network_id = module.cloudwan.core_network_id
   vpc_arn         = data.aws_vpc.vpc_b.arn
@@ -166,6 +179,8 @@ resource "aws_networkmanager_vpc_attachment" "vpc_b" {
     Name    = "cloudwan-vpc-b-attachment"
     Segment = module.cloudwan.segment_name
   })
+
+  depends_on = [time_sleep.wait_for_cloudwan_policy_live]
 }
 
 resource "aws_route" "vpc_a_public_to_cloudwan" {
@@ -195,7 +210,7 @@ resource "aws_route" "vpc_a_private_to_cloudwan" {
 }
 
 resource "aws_route" "vpc_b_public_to_cloudwan" {
-  provider = aws.use2
+  provider = aws.usw2
 
   route_table_id         = module.vpc_b.public_route_table_id
   destination_cidr_block = local.vpc_a_cidr
@@ -208,7 +223,7 @@ resource "aws_route" "vpc_b_public_to_cloudwan" {
 }
 
 resource "aws_route" "vpc_b_private_to_cloudwan" {
-  provider = aws.use2
+  provider = aws.usw2
 
   route_table_id         = module.vpc_b.private_route_table_id
   destination_cidr_block = local.vpc_a_cidr

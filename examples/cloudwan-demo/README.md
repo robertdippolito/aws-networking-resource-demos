@@ -3,7 +3,7 @@
 Creates a basic cross-region CloudWAN topology:
 
 - VPC A in `region_a` (default `us-east-1`)
-- VPC B in `region_b` (default `us-east-2`)
+- VPC B in `region_b` (default `us-west-2`)
 - One EC2 demo endpoint per VPC
 - CloudWAN global network and core network
 - One VPC attachment per region
