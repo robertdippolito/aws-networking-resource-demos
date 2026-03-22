@@ -29,3 +29,5 @@ terraform.rc
 # Crash logs
 crash.log
 crash.*.log
+
+.DS_Store
